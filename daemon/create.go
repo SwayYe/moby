@@ -114,7 +114,9 @@ func (daemon *Daemon) create(opts createOpts) (retC *container.Container, retErr
 
 	os := runtime.GOOS
 	if opts.params.Config.Image != "" {
+		fmt.Println("Start of GetImage, /daemon/create.go ",time.Now())
 		img, err = daemon.imageService.GetImage(opts.params.Config.Image)
+		fmt.Println("End of GetImage, /daemon/create.go ",time.Now())
 		if err != nil {
 			return nil, err
 		}
@@ -152,7 +154,7 @@ func (daemon *Daemon) create(opts createOpts) (retC *container.Container, retErr
 	if err := daemon.mergeAndVerifyLogConfig(&opts.params.HostConfig.LogConfig); err != nil {
 		return nil, errdefs.InvalidParameter(err)
 	}
-
+	fmt.Println("Start of newContainer, /daemon/create.go ",time.Now())
 	if container, err = daemon.newContainer(opts.params.Name, os, opts.params.Config, opts.params.HostConfig, imgID, opts.managed); err != nil {
 		return nil, err
 	}
@@ -188,7 +190,9 @@ func (daemon *Daemon) create(opts createOpts) (retC *container.Container, retErr
 	}
 
 	// Set RWLayer for container after mount labels have been set
+	fmt.Println("Start of CreateLayer, /daemon/create.go ",time.Now())
 	rwLayer, err := daemon.imageService.CreateLayer(container, setupInitLayer(daemon.idMapping))
+	fmt.Println("End of CreateLayer, /daemon/create.go ",time.Now())
 	if err != nil {
 		return nil, errdefs.System(err)
 	}
@@ -225,6 +229,7 @@ func (daemon *Daemon) create(opts createOpts) (retC *container.Container, retErr
 	}
 	stateCtr.set(container.ID, "stopped")
 	daemon.LogContainerEvent(container, "create")
+	fmt.Println("End of create, /daemon/create.go ",time.Now())
 	return container, nil
 }
 

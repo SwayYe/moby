@@ -3,6 +3,7 @@ package daemon // import "github.com/docker/docker/daemon"
 import (
 	"context"
 	"runtime"
+	"fmt"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -16,6 +17,7 @@ import (
 
 // ContainerStart starts a container.
 func (daemon *Daemon) ContainerStart(name string, hostConfig *containertypes.HostConfig, checkpoint string, checkpointDir string) error {
+	fmt.Println("Start of ContainerStart, /daemon/start.go ",time.Now())
 	if checkpoint != "" && !daemon.HasExperimental() {
 		return errdefs.InvalidParameter(errors.New("checkpoint is only supported in experimental mode"))
 	}
@@ -100,6 +102,7 @@ func (daemon *Daemon) ContainerStart(name string, hostConfig *containertypes.Hos
 // between containers. The container is left waiting for a signal to
 // begin running.
 func (daemon *Daemon) containerStart(container *container.Container, checkpoint string, checkpointDir string, resetRestartManager bool) (err error) {
+	fmt.Println("Start of containerStart, /daemon/start.go ",time.Now())
 	start := time.Now()
 	container.Lock()
 	defer container.Unlock()
@@ -194,11 +197,12 @@ func (daemon *Daemon) containerStart(container *container.Container, checkpoint 
 			return translateContainerdStartErr(container.Path, container.SetExitCode, err)
 		}
 	}
-
+	fmt.Println("Start of Start, /daemon/start.go ",time.Now())
 	// TODO(mlaventure): we need to specify checkpoint options here
 	pid, err := daemon.containerd.Start(context.Background(), container.ID, checkpointDir,
 		container.StreamConfig.Stdin() != nil || container.Config.Tty,
 		container.InitializeStdio)
+	fmt.Println("End of Start, /daemon/start.go ",time.Now())
 	if err != nil {
 		if err := daemon.containerd.Delete(context.Background(), container.ID); err != nil {
 			logrus.WithError(err).WithField("container", container.ID).

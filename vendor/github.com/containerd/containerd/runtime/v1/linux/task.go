@@ -21,6 +21,8 @@ package linux
 import (
 	"context"
 	"sync"
+	"fmt"
+	"time"
 
 	"github.com/containerd/cgroups"
 	eventstypes "github.com/containerd/containerd/api/events"
@@ -115,6 +117,7 @@ func (t *Task) Start(ctx context.Context) error {
 	t.mu.Lock()
 	hasCgroup := t.cg != nil
 	t.mu.Unlock()
+	fmt.Println("Start of Start, /vendor/github.com/containerd/containerd/runtime/v1/linux/task.go ",time.Now())
 	r, err := t.shim.Start(ctx, &shim.StartRequest{
 		ID: t.id,
 	})
@@ -281,6 +284,7 @@ func (t *Task) Checkpoint(ctx context.Context, path string, options *types.Any) 
 		Path:    path,
 		Options: options,
 	}
+	fmt.Println("start of Checkpoint, /vendor/github.com/containerd/containerd/runtime/v1/linux/task.go ",time.Now())
 	if _, err := t.shim.Checkpoint(ctx, r); err != nil {
 		return errdefs.FromGRPC(err)
 	}

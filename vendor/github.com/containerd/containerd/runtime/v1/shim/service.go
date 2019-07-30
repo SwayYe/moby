@@ -22,6 +22,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -200,6 +201,7 @@ func (s *Service) Start(ctx context.Context, r *shimapi.StartRequest) (*shimapi.
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("start of Start, /vendor/github.com/containerd/containerd/runtime/v1/shim/service.go ",time.Now())
 	if err := p.Start(ctx); err != nil {
 		return nil, err
 	}
@@ -448,6 +450,7 @@ func (s *Service) Checkpoint(ctx context.Context, r *shimapi.CheckpointTaskReque
 		}
 		options = *v.(*runctypes.CheckpointOptions)
 	}
+	fmt.Println("start of checkpoint, /vendor/github.com/containerd/containerd/runtime/v1/shim/service.go ",time.Now())
 	if err := p.(*proc.Init).Checkpoint(ctx, &proc.CheckpointConfig{
 		Path:                     r.Path,
 		Exit:                     options.Exit,
@@ -460,6 +463,7 @@ func (s *Service) Checkpoint(ctx context.Context, r *shimapi.CheckpointTaskReque
 	}); err != nil {
 		return nil, errdefs.ToGRPC(err)
 	}
+	fmt.Println("end of checkpoint, /vendor/github.com/containerd/containerd/runtime/v1/shim/service.go ",time.Now())
 	return empty, nil
 }
 

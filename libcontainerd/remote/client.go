@@ -12,6 +12,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
+	"fmt"
 
 	"github.com/Microsoft/hcsshim/cmd/containerd-shim-runhcs-v1/options"
 	"github.com/containerd/containerd"
@@ -154,7 +155,7 @@ func (c *client) Start(ctx context.Context, id, checkpointDir string, withStdin 
 		rio            cio.IO
 		stdinCloseSync = make(chan struct{})
 	)
-
+	fmt.Println("start of finding checkpoint, /libcontainerd/remote/client.go ",time.Now())
 	if checkpointDir != "" {
 		// write checkpoint to the content store
 		tar := archive.Diff(ctx, "", checkpointDir)
@@ -223,7 +224,7 @@ func (c *client) Start(ctx context.Context, id, checkpointDir string, withStdin 
 
 	// Signal c.createIO that it can call CloseIO
 	close(stdinCloseSync)
-
+	fmt.Println("start of Start, /libcontainerd/remote/client.go ",time.Now())
 	if err := t.Start(ctx); err != nil {
 		if _, err := t.Delete(ctx); err != nil {
 			c.logger.WithError(err).WithField("container", id).
@@ -231,7 +232,7 @@ func (c *client) Start(ctx context.Context, id, checkpointDir string, withStdin 
 		}
 		return -1, wrapError(err)
 	}
-
+	fmt.Println("End of start, /libcontainerd/remote/client.go ",time.Now())
 	return int(t.Pid()), nil
 }
 
@@ -501,10 +502,12 @@ func (c *client) CreateCheckpoint(ctx context.Context, containerID, checkpointDi
 			return nil
 		})
 	}
+	fmt.Println("start of getCheckpoint, /libcontainerd/remote/client.go ",time.Now())
 	img, err := p.(containerd.Task).Checkpoint(ctx, opts...)
 	if err != nil {
 		return wrapError(err)
 	}
+	fmt.Println("end of getCheckpoint, /libcontainerd/remote/client.go ",time.Now())
 	// Whatever happens, delete the checkpoint from containerd
 	defer func() {
 		err := c.client.ImageService().Delete(context.Background(), img.Name())

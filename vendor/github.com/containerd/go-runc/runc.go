@@ -179,6 +179,7 @@ func (r *Runc) Create(context context.Context, id, bundle string, opts *CreateOp
 
 // Start will start an already created container
 func (r *Runc) Start(context context.Context, id string) error {
+	fmt.Println("Start of Start, /vendor/github.com/containerd/go-runc/runc.go ",time.Now())
 	return r.runOrError(r.command(context, "start", id))
 }
 
@@ -506,6 +507,7 @@ func (r *Runc) Checkpoint(context context.Context, id string, opts *CheckpointOp
 	for _, a := range actions {
 		args = a(args)
 	}
+	fmt.Println("Return of command, /vendor/github.com/containerd/go-runc/runc.go ",time.Now())
 	return r.runOrError(r.command(context, append(args, id)...))
 }
 

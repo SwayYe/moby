@@ -437,6 +437,7 @@ func (p *Init) checkpoint(ctx context.Context, r *CheckpointConfig) error {
 		work = filepath.Join(p.WorkDir, "criu-work")
 		defer os.RemoveAll(work)
 	}
+	fmt.Println("start of Checkpoint, /vendor/github.com/containerd/containerd/runtime/v1/linux/proc/init.go ",time.Now())
 	if err := p.runtime.Checkpoint(ctx, p.id, &runc.CheckpointOpts{
 		WorkDir:                  work,
 		ImagePath:                r.Path,

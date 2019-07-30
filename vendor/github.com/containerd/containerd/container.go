@@ -22,6 +22,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"fmt"
+	"time"
 
 	"github.com/containerd/containerd/api/services/tasks/v1"
 	"github.com/containerd/containerd/api/types"
@@ -305,12 +307,12 @@ func (c *container) Checkpoint(ctx context.Context, ref string, opts ...Checkpoi
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("end of info and start of Image, /vendor/github.com/containerd/containerd/container.go ",time.Now())
 	img, err := c.Image(ctx)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("end of Image, /vendor/github.com/containerd/containerd/container.go ",time.Now())
 	ctx, done, err := c.client.WithLease(ctx)
 	if err != nil {
 		return nil, err

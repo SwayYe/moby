@@ -21,6 +21,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"fmt"
 
 	"github.com/containerd/containerd/api/services/tasks/v1"
 	"github.com/containerd/containerd/cio"
@@ -115,6 +116,7 @@ func (p *process) Pid() uint32 {
 
 // Start starts the exec process
 func (p *process) Start(ctx context.Context) error {
+	fmt.Println("Start of Start, /vendor/github.com/containerd/containerd/process.go ",time.Now())
 	r, err := p.task.client.TaskService().Start(ctx, &tasks.StartRequest{
 		ContainerID: p.task.id,
 		ExecID:      p.id,

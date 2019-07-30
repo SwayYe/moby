@@ -198,6 +198,7 @@ func (t *task) Pid() uint32 {
 }
 
 func (t *task) Start(ctx context.Context) error {
+	fmt.Println("Start of Start, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 	r, err := t.client.TaskService().Start(ctx, &tasks.StartRequest{
 		ContainerID: t.id,
 	})
@@ -453,9 +454,11 @@ func (t *task) Checkpoint(ctx context.Context, opts ...CheckpointTaskOpts) (Imag
 		},
 		Annotations: make(map[string]string),
 	}
+	fmt.Println("start of checkpointTask, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 	if err := t.checkpointTask(ctx, &index, request); err != nil {
 		return nil, err
 	}
+	fmt.Println("end of checkpointTask, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 	// if checkpoint image path passed, jump checkpoint image,
 	// return an empty image
 	if isCheckpointPathExist(cr.Runtime.Name, i.Options) {
@@ -463,15 +466,19 @@ func (t *task) Checkpoint(ctx context.Context, opts ...CheckpointTaskOpts) (Imag
 	}
 
 	if cr.Image != "" {
+		fmt.Println("start of checkpointImage, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 		if err := t.checkpointImage(ctx, &index, cr.Image); err != nil {
 			return nil, err
 		}
+		fmt.Println("end of checkpointImage, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 		index.Annotations["image.name"] = cr.Image
 	}
 	if cr.SnapshotKey != "" {
+		fmt.Println("start of checkpointRWSnapshot, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 		if err := t.checkpointRWSnapshot(ctx, &index, cr.Snapshotter, cr.SnapshotKey); err != nil {
 			return nil, err
 		}
+		fmt.Println("end of checkpointRWSnapshot, /vendor/github.com/containerd/containerd/task.go ",time.Now())
 	}
 	desc, err := t.writeIndex(ctx, &index)
 	if err != nil {

@@ -3,6 +3,7 @@ package daemon // import "github.com/docker/docker/daemon"
 import (
 	"context"
 	"fmt"
+	"time"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -65,12 +66,13 @@ func (daemon *Daemon) CheckpointCreate(name string, config types.CheckpointCreat
 	if !validCheckpointNamePattern.MatchString(config.CheckpointID) {
 		return fmt.Errorf("Invalid checkpoint ID (%s), only %s are allowed", config.CheckpointID, validCheckpointNameChars)
 	}
-
+	fmt.Println("start of getCheckpointDir, /daemon/checkpoint.go ",time.Now())
 	checkpointDir, err := getCheckpointDir(config.CheckpointDir, config.CheckpointID, name, container.ID, container.CheckpointDir(), true)
 	if err != nil {
 		return fmt.Errorf("cannot checkpoint container %s: %s", name, err)
 	}
-
+	fmt.Println("end of getCheckpointDir, /daemon/checkpoint.go ",time.Now())
+	fmt.Println("start of CreateCheckpoint")
 	err = daemon.containerd.CreateCheckpoint(context.Background(), container.ID, checkpointDir, config.Exit)
 	if err != nil {
 		os.RemoveAll(checkpointDir)
